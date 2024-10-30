@@ -1,10 +1,10 @@
-// MainMenu.java
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 
 public class MainMenu extends JFrame {
+
+    private Game game;
 
     public MainMenu() {
         setTitle("Castle Craft");
@@ -35,6 +35,16 @@ public class MainMenu extends JFrame {
         centerPanel.add(exitButton);
         centerPanel.add(Box.createVerticalStrut(100));
 
+        game = new Game();  // Initialize game to access stored record
+        int record = game.getHighestTurn();
+        if (record > 0) {
+            JLabel recordLabel = new JLabel("Rekord: " + record);
+            recordLabel.setFont(new Font("Arial", Font.BOLD, 18));
+            recordLabel.setForeground(Color.WHITE);
+            recordLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            centerPanel.add(recordLabel);
+        }
+
         JPanel footerPanel = new JPanel();
         footerPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         footerPanel.setBackground(Color.DARK_GRAY);
@@ -42,20 +52,14 @@ public class MainMenu extends JFrame {
         creditsLabel.setForeground(Color.WHITE);
         footerPanel.add(creditsLabel);
 
-        newGameButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        newGameButton.addActionListener(e -> {
 
-                dispose();
+            dispose();
 
-                new GameWindow();
-            }
+            new GameWindow();
         });
 
-        exitButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        exitButton.addActionListener(e -> System.exit(0));
 
         panel.add(centerPanel, BorderLayout.CENTER);
         panel.add(footerPanel, BorderLayout.SOUTH);
