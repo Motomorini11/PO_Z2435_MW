@@ -8,7 +8,9 @@ import java.awt.event.MouseEvent;
 
 public class GameWindow extends JFrame {
     private Game game;
+    private JPanel infoPanel;
     private JPanel mainPanel;
+    private Building currentBuilding;
     private ResourceDisplay energyDisplay;
     private ResourceDisplay woodDisplay;
     private ResourceDisplay stoneDisplay;
@@ -22,7 +24,6 @@ public class GameWindow extends JFrame {
     private int nextAttackTurn;
     private int attackPower;
     private AttackDisplay attackDisplay;
-    private BuildingInfoPanel buildingInfoPanel;
 
     public GameWindow() {
         setTitle("Castle Craft - Game");
@@ -37,6 +38,19 @@ public class GameWindow extends JFrame {
         mainPanel = new JPanel();
         mainPanel.setLayout(null);
         mainPanel.setBackground(Color.BLACK);
+
+        mainPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                closeInfoPanel();
+            }
+        });
+
+        infoPanel = new JPanel(null);
+        infoPanel.setBounds(55, 450, 300, 400); // Position and size
+        infoPanel.setBackground(new Color(139, 69, 19, 180)); // Color and transparency
+        infoPanel.setVisible(false);
+        add(infoPanel);
 
         energyDisplay = new ResourceDisplay(new ImageIcon("images/energy.png"), game.getEnergy(), 75, 75,false);
         energyDisplay.setBounds(1545, 70, 150, 75);
@@ -85,7 +99,8 @@ public class GameWindow extends JFrame {
         attackDisplay.setBounds(75, 290, 280, 80);
         mainPanel.add(attackDisplay);
 
-        spawnBuilding(1000, 700, 200, 100, 0, 200, 0, "Tartak", 1, 5, 2, 10);
+        Building sampleBuilding = new Building(10, 5, 20, 3, 100, 50, 25);
+        RectangleSpawner.spawnRectangle(mainPanel, 1000, 670, 200, 100, 0, 150, 0, 128, "Tartak", "Arial", 16, sampleBuilding, infoPanel);
 
 
         // Return button setup
@@ -202,26 +217,56 @@ public class GameWindow extends JFrame {
         repaint();
     }
 
-    public void spawnBuilding(int x, int y, int width, int height, int r, int g, int b, String buildingName, int buildingLevel, int energyCost, int workerCost, int yield) {
-        spawnBuilding building = new spawnBuilding(x, y, width, height, r, g, b, buildingName);
-        building.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                showBuildingInfo(buildingName, buildingLevel, energyCost, workerCost, yield);
-            }
-        });
-        mainPanel.add(building);
-        repaint();
-    }
+    public void showInfoPanel(Building building) {
 
-    private void showBuildingInfo(String buildingName, int buildingLevel, int energyCost, int workerCost, int yield) {
-        if (buildingInfoPanel != null) {
-            mainPanel.remove(buildingInfoPanel);
+        if (infoPanel.isVisible() && currentBuilding == building) {
+            return;
         }
+        currentBuilding = building;
+        infoPanel.removeAll(); // Clear previous components
 
-        buildingInfoPanel = new BuildingInfoPanel(buildingName, buildingLevel, energyCost, workerCost, yield, game);
-        mainPanel.add(buildingInfoPanel);
-        mainPanel.repaint();
+        // Display building information with custom positioning
+        JLabel energyLabel = new JLabel("Energy Cost: " + building.getEnergyCost());
+        energyLabel.setBounds(10, 10, 200, 25);  // Custom position
+
+        JLabel workersLabel = new JLabel("Workers Required: " + building.getWorkersRequired());
+        workersLabel.setBounds(10, 50, 200, 25);
+
+        JLabel productionLabel = new JLabel("Production Output: " + building.getProductionOutput());
+        productionLabel.setBounds(10, 90, 200, 25);
+
+        JLabel timeLabel = new JLabel("Production Time: " + building.getProductionTime() + " turns");
+        timeLabel.setBounds(10, 130, 200, 25);
+
+        JButton startButton = new JButton("Start Production");
+        startButton.setBounds(10, 170, 150, 30);  // Custom position for the button
+
+        JButton cancelButton = new JButton("Cancel Production");
+        cancelButton.setBounds(10, 210, 150, 30);
+
+        JButton upgradeButton = new JButton("Upgrade (Gold: " + building.getGoldUpgradeCost() +
+                ", Wood: " + building.getWoodUpgradeCost() + ", Stone: " + building.getStoneUpgradeCost() + ")");
+        upgradeButton.setBounds(10, 250, 200, 30);
+
+        // Add components to the info panel
+        infoPanel.add(energyLabel);
+        infoPanel.add(workersLabel);
+        infoPanel.add(productionLabel);
+        infoPanel.add(timeLabel);
+        infoPanel.add(startButton);
+        infoPanel.add(cancelButton);
+        infoPanel.add(upgradeButton);
+
+        // Make the info panel visible
+        infoPanel.setVisible(true);
+
+        // Refresh the panel
+        infoPanel.revalidate();
+        infoPanel.repaint();
     }
-
+    private void closeInfoPanel() {
+        infoPanel.setVisible(false);
+        currentBuilding = null;  // Reset the current building reference
+    }
 }
+
