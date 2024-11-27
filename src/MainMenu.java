@@ -20,10 +20,10 @@ public class MainMenu extends JFrame {
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.setBackground(Color.BLACK);
 
-        JButton newGameButton = new JButton("Nowa Gra");
-        JButton exitButton = new JButton("Wyjście");
+        JButton newGameButton = new JButton("New Game");
+        JButton exitButton = new JButton("Exit");
 
-        Font buttonFont = new Font("Arial", Font.BOLD, 24);
+        Font buttonFont = new Font("Arial", Font.BOLD, 30);
         newGameButton.setFont(buttonFont);
         exitButton.setFont(buttonFont);
 
@@ -38,7 +38,7 @@ public class MainMenu extends JFrame {
         game = new Game();  // Initialize game to access stored record
         int record = game.getHighestTurn();
         if (record > 0) {
-            JLabel recordLabel = new JLabel("Rekord: " + record);
+            JLabel recordLabel = new JLabel("High Score: " + record);
             recordLabel.setFont(new Font("Arial", Font.BOLD, 18));
             recordLabel.setForeground(Color.WHITE);
             recordLabel.setAlignmentX(Component.CENTER_ALIGNMENT);

@@ -8,8 +8,8 @@ import java.awt.event.MouseEvent;
 
 public class GameWindow extends JFrame {
     private Game game;
-    private JPanel infoPanel;
     private JPanel mainPanel;
+    private InfoPanel infoPanel;
     private Building currentBuilding;
     private ResourceDisplay energyDisplay;
     private ResourceDisplay woodDisplay;
@@ -21,8 +21,6 @@ public class GameWindow extends JFrame {
     private ResourceDisplay toolDisplay;
     private ResourceDisplay ironDisplay;
     private JLabel turnCounterLabel;
-    private int nextAttackTurn;
-    private int attackPower;
     private AttackDisplay attackDisplay;
 
     public GameWindow() {
@@ -42,15 +40,21 @@ public class GameWindow extends JFrame {
         mainPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (infoPanel.getBounds().contains(e.getPoint())) {
+                    return;
+                }
                 closeInfoPanel();
             }
         });
 
-        infoPanel = new JPanel(null);
-        infoPanel.setBounds(55, 450, 300, 400); // Position and size
-        infoPanel.setBackground(new Color(139, 69, 19, 180)); // Color and transparency
-        infoPanel.setVisible(false);
+        infoPanel = new InfoPanel();
+        infoPanel.setBounds(55, 450, 300, 400);
         add(infoPanel);
+
+        setupTurnCounter(mainPanel, 80, 50, 60, "Arial");
+        attackDisplay = new AttackDisplay(game);
+        attackDisplay.setBounds(58, 280, 300, 90);
+        mainPanel.add(attackDisplay);
 
         energyDisplay = new ResourceDisplay(new ImageIcon("images/energy.png"), game.getEnergy(), 75, 75,false);
         energyDisplay.setBounds(1545, 70, 150, 75);
@@ -89,26 +93,21 @@ public class GameWindow extends JFrame {
         swordDisplay.setBounds(1715, 710, 150, 75);
         mainPanel.add(swordDisplay);
 
-        setupTurnCounter(mainPanel, 80, 50, 60, "Arial");
+        Building Tartak = new Building(1, 1, 20, 1, 10, 0, 0,1);
+        RectangleSpawner.spawnRectangle(mainPanel, 1000, 670, 200, 100, 0, 150, 0, 200, "Sawmill", "Arial", 20, Tartak, infoPanel);
 
-        nextAttackTurn = calculateNextAttackTurn(game.getTurn());
-        attackPower = calculateAttackPower(game.getTurn());
+        Building Kamien = new Building(2, 2, 20, 1, 0, 1, 1,2);
+        RectangleSpawner.spawnRectangle(mainPanel, 500, 270, 200, 100, 169, 169, 169, 220, "Quarry", "Arial", 20, Kamien, infoPanel);
 
-        // Create and add the AttackDisplay to show attack countdown and power
-        attackDisplay = new AttackDisplay(nextAttackTurn - game.getTurn(), attackPower);
-        attackDisplay.setBounds(75, 290, 280, 80);
-        mainPanel.add(attackDisplay);
-
-        Building sampleBuilding = new Building(10, 5, 20, 3, 100, 50, 25);
-        RectangleSpawner.spawnRectangle(mainPanel, 1000, 670, 200, 100, 0, 150, 0, 128, "Tartak", "Arial", 16, sampleBuilding, infoPanel);
-
+        Building Farm = new Building(3, 2, 20, 1, 0, 1, 1,3);
+        RectangleSpawner.spawnRectangle(mainPanel,1140,255,200,100,155,118,83,220,"Farm","Arial", 20, Farm, infoPanel);
 
         // Return button setup
-        JButton returnButton = new JButton("Powrót");
+        JButton returnButton = new JButton("Back");
         returnButton.setFont(new Font("Arial", Font.BOLD, 18));
         returnButton.setBounds(40, 1010, 120, 40);
         returnButton.addActionListener(e -> {
-            int result = JOptionPane.showConfirmDialog(this, "Wyjść?", "Potwierdzenie", JOptionPane.YES_NO_OPTION);
+            int result = JOptionPane.showConfirmDialog(this, "Exit? Only your current highest turn will be saved!", "Didn't bother with saving hi hi", JOptionPane.YES_NO_OPTION);
             if (result == JOptionPane.YES_OPTION) {
                 game.storeHighestTurn();
                 dispose();
@@ -123,12 +122,13 @@ public class GameWindow extends JFrame {
         endTurnButton.setBounds(1715, 920, 150, 75);
         endTurnButton.addActionListener(e -> {
             game.nextTurn();
-            checkForAttack();
+            attackDisplay.handleTurnChange();
             updateAllResources();
             updateTurnCounter();
             workersDisplay.updateCounts(game.getWorkers(), game.getMaxWorkers(),game.getFreeWorkers());
             if (game.checkForGameOver()) {
-                JOptionPane.showMessageDialog(this, "Game Over! You survived " + game.getTurn() + " turns.");
+                JOptionPane.showMessageDialog(this, "Game Over! All workers are dead. You survived " + game.getTurn() + " turns.");
+                game.storeHighestTurn();
                 dispose();
                 new MainMenu().setVisible(true);
             }
@@ -164,7 +164,7 @@ public class GameWindow extends JFrame {
     }
 
     private void setupTurnCounter(JPanel mainPanel, int x, int y, int fontSize, String fontName) {
-        turnCounterLabel = new JLabel("Tura: " + game.getTurn());
+        turnCounterLabel = new JLabel("Turn: " + game.getTurn());
         turnCounterLabel.setFont(new Font(fontName, Font.PLAIN, fontSize));
         turnCounterLabel.setForeground(Color.WHITE);
         turnCounterLabel.setBounds(x, y, 250, 100);
@@ -177,96 +177,13 @@ public class GameWindow extends JFrame {
         mainPanel.add(turnCounterLabel);
     }
 
-    private void checkForAttack() {
-        int currentTurn = game.getTurn();
-
-        if (currentTurn >= nextAttackTurn) {
-            // Check if player has enough weapons to survive the attack
-            if (game.getSword() >= attackPower) {
-                game.useSword(attackPower);
-                nextAttackTurn = calculateNextAttackTurn(currentTurn); // Schedule next attack
-                attackPower = calculateAttackPower(currentTurn); // Increase attack power
-
-                // Update the AttackDisplay with the new countdown and power
-                attackDisplay.updateDisplay(nextAttackTurn - currentTurn, attackPower);
-            } else {
-                // Game over if weapons are insufficient
-                JOptionPane.showMessageDialog(this, "Game Over! Nie udało ci się obronić zamku.");
-                dispose();
-                new MainMenu().setVisible(true);
-            }
-        } else {
-            // Update countdown if no attack this turn
-            attackDisplay.updateDisplay(nextAttackTurn - currentTurn, attackPower);
-
-        }
-
-    }
-
-    // Function to calculate the turn number for the next attack
-    private int calculateNextAttackTurn(int currentTurn) {
-        return currentTurn + (int) (10 + Math.log(currentTurn +1) * 10 - currentTurn); // Adjust frequency as needed
-    }
-
-    // Function to calculate attack power based on current turn
-    private int calculateAttackPower(int currentTurn) {
-        return (int) (20 + currentTurn * 1.5); // Adjust power growth rate as needed
-    }
     private void updateTurnCounter() {
-        turnCounterLabel.setText("Tura: " + game.getTurn());
+        turnCounterLabel.removeAll();
+        turnCounterLabel.setText("Turn: " + game.getTurn());
         repaint();
-    }
-
-    public void showInfoPanel(Building building) {
-
-        if (infoPanel.isVisible() && currentBuilding == building) {
-            return;
-        }
-        currentBuilding = building;
-        infoPanel.removeAll(); // Clear previous components
-
-        // Display building information with custom positioning
-        JLabel energyLabel = new JLabel("Energy Cost: " + building.getEnergyCost());
-        energyLabel.setBounds(10, 10, 200, 25);  // Custom position
-
-        JLabel workersLabel = new JLabel("Workers Required: " + building.getWorkersRequired());
-        workersLabel.setBounds(10, 50, 200, 25);
-
-        JLabel productionLabel = new JLabel("Production Output: " + building.getProductionOutput());
-        productionLabel.setBounds(10, 90, 200, 25);
-
-        JLabel timeLabel = new JLabel("Production Time: " + building.getProductionTime() + " turns");
-        timeLabel.setBounds(10, 130, 200, 25);
-
-        JButton startButton = new JButton("Start Production");
-        startButton.setBounds(10, 170, 150, 30);  // Custom position for the button
-
-        JButton cancelButton = new JButton("Cancel Production");
-        cancelButton.setBounds(10, 210, 150, 30);
-
-        JButton upgradeButton = new JButton("Upgrade (Gold: " + building.getGoldUpgradeCost() +
-                ", Wood: " + building.getWoodUpgradeCost() + ", Stone: " + building.getStoneUpgradeCost() + ")");
-        upgradeButton.setBounds(10, 250, 200, 30);
-
-        // Add components to the info panel
-        infoPanel.add(energyLabel);
-        infoPanel.add(workersLabel);
-        infoPanel.add(productionLabel);
-        infoPanel.add(timeLabel);
-        infoPanel.add(startButton);
-        infoPanel.add(cancelButton);
-        infoPanel.add(upgradeButton);
-
-        // Make the info panel visible
-        infoPanel.setVisible(true);
-
-        // Refresh the panel
-        infoPanel.revalidate();
-        infoPanel.repaint();
     }
     private void closeInfoPanel() {
         infoPanel.setVisible(false);
-        currentBuilding = null;  // Reset the current building reference
+        currentBuilding = null;
     }
 }
-

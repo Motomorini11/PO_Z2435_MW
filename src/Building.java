@@ -6,9 +6,10 @@ public class Building {
     private int goldUpgradeCost;
     private int woodUpgradeCost;
     private int stoneUpgradeCost;
+    private int level;
 
     public Building(int energyCost, int workersRequired, int productionOutput, int productionTime,
-                    int goldUpgradeCost, int woodUpgradeCost, int stoneUpgradeCost) {
+                    int goldUpgradeCost, int woodUpgradeCost, int stoneUpgradeCost, int level) {
         this.energyCost = energyCost;
         this.workersRequired = workersRequired;
         this.productionOutput = productionOutput;
@@ -16,6 +17,7 @@ public class Building {
         this.goldUpgradeCost = goldUpgradeCost;
         this.woodUpgradeCost = woodUpgradeCost;
         this.stoneUpgradeCost = stoneUpgradeCost;
+        this.level = level;
     }
 
     // Getters and setters for each property, e.g.:
@@ -33,4 +35,6 @@ public class Building {
     public void setWoodUpgradeCost(int woodUpgradeCost) { this.woodUpgradeCost = woodUpgradeCost; }
     public int getStoneUpgradeCost() { return stoneUpgradeCost; }
     public void setStoneUpgradeCost(int stoneUpgradeCost) { this.stoneUpgradeCost = stoneUpgradeCost; }
+    public int getLevel() { return level; }
+    public void setLevel(int level) { this.level = level; }
 }

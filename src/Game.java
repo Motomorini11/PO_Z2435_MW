@@ -28,7 +28,7 @@ public class Game {
         this.food = 400; // Starting food
         this.gold = 50; // Starting gold
         this.iron = 0;
-        this.sword = 21;
+        this.sword = 2100;
         this.tool = 0;
         this.workers = 5; // Starting workers
         this.maxWorkers = 5; // Initial capacity
@@ -159,8 +159,29 @@ public class Game {
     public void addEnergy(int amount) {
         energy = Math.min(energy + amount, maxEnergy);
     }
-
     public void addWorkers(int amount) {
         FreeWorkers = Math.min(FreeWorkers + amount, maxWorkers);
     }
+    public void addwood(int amount) {
+        wood = wood + amount;
+    }
+    public void addstone(int amount) {
+        stone = stone + amount;
+    }
+    public void addFood(int amount) {
+        food = food + amount;
+    }
+    public void addGold(int amount) {
+        gold = gold + amount;
+    }
+    public void addTool(int amount) {
+        tool = tool + amount;
+    }
+    public void addsword(int amount) {
+        sword = sword + amount;
+    }
+    public void addiron(int amount) {
+        iron = iron + amount;
+    }
+
 }
