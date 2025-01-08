@@ -41,15 +41,18 @@ public class GameWindow extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (infoPanel.getBounds().contains(e.getPoint())) {
+                    updateAllResources();
                     return;
                 }
                 closeInfoPanel();
+                updateAllResources();
             }
         });
 
-        infoPanel = new InfoPanel();
+        infoPanel = new InfoPanel(game);
         infoPanel.setBounds(55, 450, 300, 400);
         add(infoPanel);
+
 
         setupTurnCounter(mainPanel, 80, 50, 60, "Arial");
         attackDisplay = new AttackDisplay(game);
@@ -135,7 +138,6 @@ public class GameWindow extends JFrame {
         });
         mainPanel.add(endTurnButton);
 
-        // Playable area setup with background image
         JLabel playableArea = new JLabel();
         try {
             Image backgroundImage = ImageIO.read(new File("images/BackG.png"));
@@ -169,7 +171,6 @@ public class GameWindow extends JFrame {
         turnCounterLabel.setForeground(Color.WHITE);
         turnCounterLabel.setBounds(x, y, 250, 100);
 
-        // Create a semi-transparent background color
         Color semiTransparentBackground = new Color(0, 0, 0, 128);
 
         turnCounterLabel.setOpaque(true);

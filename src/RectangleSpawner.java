@@ -7,6 +7,7 @@ import java.util.Map;
 
 
 public class RectangleSpawner {
+    private Game game;
 
     private static Map<Building, String> buildingNames = new HashMap<>();
 
@@ -28,10 +29,12 @@ public class RectangleSpawner {
      * @param building    Type of the building
      * @param infoPanel   Type of info displayed
      */
+
     public static void spawnRectangle(JPanel parentPanel, int x, int y, int width, int height, int red, int green, int blue, int alpha,
                                       String name, String fontName, int fontSize, Building building, InfoPanel infoPanel) {
 
         buildingNames.put(building, name);
+
 
         JPanel rectanglePanel = new JPanel() {
             @Override

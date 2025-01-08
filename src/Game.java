@@ -21,45 +21,43 @@ public class Game {
     public Game() {
         prefs = Preferences.userNodeForPackage(Game.class);
         this.turn = 1;
-        this.energy = 10;  // Starting energy
+        this.energy = 10;
         this.maxEnergy = energy;
-        this.wood = 0;
-        this.stone = 0;
-        this.food = 400; // Starting food
-        this.gold = 50; // Starting gold
+        this.wood = 100;
+        this.stone = 100;
+        this.food = 400;
+        this.gold = 50;
         this.iron = 0;
         this.sword = 2100;
         this.tool = 0;
-        this.workers = 5; // Starting workers
-        this.maxWorkers = 5; // Initial capacity
+        this.workers = 5;
+        this.maxWorkers = 5;
         this.FreeWorkers = workers;
     }
 
-    // End the current turn, consume food, regenerate energy, etc.
+
     public void nextTurn() {
         turn++;
 
         energy = Math.min(energy + 10, maxEnergy);
 
-        // Handle food consumption by workers
+
         if (food >= workers) {
-            food -= workers;  // Workers consume food as usual
+            food -= workers;
         } else {
-            int starvingWorkers = workers - food;  // Workers that can't be fed
-            food = 0;  // All food is consumed
-            workers -= starvingWorkers;  // Starving workers die
+            int starvingWorkers = workers - food;
+            food = 0;
+            workers -= starvingWorkers;
         }
 
-        // Ensure that no resource goes below 0
+
         wood = Math.max(wood, 0);
         stone = Math.max(stone, 0);
         food = Math.max(food, 0);
-        workers = Math.max(workers, 0);  // Game over if workers hit 0
+        workers = Math.max(workers, 0);
 
-        // Reset worker usage
         FreeWorkers = workers;
 
-        // Replenish energy logic and other turn-end logic
         energy = Math.min(energy + 10, maxEnergy);
         checkForGameOver();
     }
@@ -114,14 +112,14 @@ public class Game {
     }
 
     public void storeHighestTurn() {
-        int currentRecord = prefs.getInt(RECORD_KEY, 0);  // Retrieve the stored record
+        int currentRecord = prefs.getInt(RECORD_KEY, 0);
         if (turn > currentRecord) {
-            prefs.putInt(RECORD_KEY, turn);  // Store new record
+            prefs.putInt(RECORD_KEY, turn);
         }
     }
 
     public int getHighestTurn() {
-        return prefs.getInt(RECORD_KEY, 0);  // Return the highest stored turn
+        return prefs.getInt(RECORD_KEY, 0);
     }
 
     public void useSword(int amount) {
@@ -131,18 +129,18 @@ public class Game {
     public boolean deductEnergy(int amount) {
         if (energy >= amount) {
             energy -= amount;
-            return true; // Deduction successful
+            return true;
         } else {
-            return false; // Insufficient energy
+            return false;
         }
     }
 
     public boolean deductWorkers(int amount) {
         if (FreeWorkers >= amount) {
             FreeWorkers -= amount;
-            return true; // Deduction successful
+            return true;
         } else {
-            return false; // Insufficient workers
+            return false;
         }
     }
 
@@ -154,6 +152,22 @@ public class Game {
             return false;
         }
 
+    }
+    public boolean deductWood(int amount) {
+        if (wood >= amount) {
+            wood -= amount;
+            return true;
+        }else {
+            return false;
+        }
+    }
+    public boolean deductStone(int amount) {
+        if (stone >= amount) {
+            stone -= amount;
+            return true;
+        }else {
+            return false;
+        }
     }
 
     public void addEnergy(int amount) {

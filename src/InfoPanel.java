@@ -7,8 +7,10 @@ public class InfoPanel extends JPanel {
     private ResourceDisplay goldupgrade;
     private ResourceDisplay woodupgrade;
     private ResourceDisplay stoneupgrade;
+    private Game game;
 
-    public InfoPanel() {
+    public InfoPanel(Game game) {
+        this.game = game;
         setLayout(null);
         setBorder(new LineBorder(Color.BLACK, 2));
         setOpaque(false);
@@ -18,19 +20,24 @@ public class InfoPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        // Set the background color to light brown (RGB: 210, 180, 140)
+
         g.setColor(new Color(161, 102, 47));
         g.fillRect(0, 0, getWidth(), getHeight());
     }
 
     public void show(Building building) {
+
         if (isVisible() && currentBuilding == building) {
+            removeAll();
+
             return;
         }
         currentBuilding = building;
-        removeAll(); // Clear previous components
+        setVisible(false);
+        removeAll();
 
-        int yPosition = 0; // Starting Y position for label placement
+
+        int yPosition = 0;
 
         // Title label
         JLabel titleLabel = new JLabel(RectangleSpawner.getBuildingName(currentBuilding));
@@ -54,7 +61,6 @@ public class InfoPanel extends JPanel {
 
         Font infoFont = new Font("Arial", Font.PLAIN, 14);
 
-        // Display building information with custom positioning
         JLabel energyLabel = new JLabel("Energy Cost: " + building.getEnergyCost());
         energyLabel.setForeground(Color.WHITE);
         energyLabel.setFont(infoFont);
@@ -100,7 +106,31 @@ public class InfoPanel extends JPanel {
         upgradeButton.setForeground(Color.BLACK);
         upgradeButton.setBorder(new LineBorder(Color.BLACK, 1));
         upgradeButton.setFont(new Font("Arial", Font.PLAIN, 12));
-        add(upgradeButton);
+        upgradeButton.addActionListener(e -> {
+                if (building.getGoldUpgradeCost() <= game.getGold() &&
+                        building.getWoodUpgradeCost() <= game.getWood() &&
+                        building.getStoneUpgradeCost() <= game.getStone()) {
+
+
+                    game.deductGold(building.getGoldUpgradeCost());
+                    game.deductWood(building.getWoodUpgradeCost());
+                    game.deductStone(building.getStoneUpgradeCost());
+
+
+                    building.setGoldUpgradeCost(building.getGoldUpgradeCost() + 5);
+                    building.setWoodUpgradeCost(building.getWoodUpgradeCost() + 5);
+                    building.setStoneUpgradeCost(building.getStoneUpgradeCost() + 5);
+                    building.setLevel(building.getLevel() + 1);
+
+
+                    show(building);
+                } else {
+
+                    JOptionPane.showMessageDialog(null, "Not enough resources to upgrade!");
+                }
+            });
+
+            add(upgradeButton);
         yPosition += 40;
 
 
@@ -122,11 +152,9 @@ public class InfoPanel extends JPanel {
             add(stoneupgrade);
         }
 
-
-
-        setVisible(true);
         revalidate();
         repaint();
+        setVisible(true);
     }
 }
 
