@@ -61,7 +61,6 @@ public class RectangleSpawner {
         rectanglePanel.setBounds(x, y, width, height);
         rectanglePanel.setOpaque(false);
 
-        // Add click listener to show the info panel for this building
         rectanglePanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

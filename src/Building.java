@@ -20,9 +20,7 @@ public class Building {
 
     // Getters and setters for each property, e.g.:
     public int getEnergyCost() { return energyCost; }
-    public void setEnergyCost(int energyCost) { this.energyCost = energyCost; }
     public int getWorkersRequired() { return workersRequired; }
-    public void setWorkersRequired(int workersRequired) { this.workersRequired = workersRequired; }
     public int getProductionOutput() { return productionOutput; }
     public void setProductionOutput(int productionOutput) { this.productionOutput = productionOutput; }
     public int getGoldUpgradeCost() { return goldUpgradeCost; }

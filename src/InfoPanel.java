@@ -59,7 +59,6 @@ public class InfoPanel extends JPanel {
 
         Font infoFont = new Font("Arial", Font.PLAIN, 14);
 
-        // Conditional energy cost display
         if (building.getEnergyCost() > 0) {
             JLabel energyLabel = new JLabel("Energy Cost: " + building.getEnergyCost());
             energyLabel.setForeground(Color.WHITE);
@@ -69,7 +68,6 @@ public class InfoPanel extends JPanel {
             yPosition += 40;
         }
 
-        // Conditional workers required display
         if (building.getWorkersRequired() > 0) {
             JLabel workersLabel = new JLabel("Workers Required: " + building.getWorkersRequired());
             workersLabel.setForeground(Color.WHITE);
@@ -79,7 +77,7 @@ public class InfoPanel extends JPanel {
             yPosition += 40;
         }
 
-        // Conditional production output display
+
         if (building.getProductionOutput() > 0) {
             JLabel productionLabel = new JLabel("Production Output: " + building.getProductionOutput());
             productionLabel.setForeground(Color.WHITE);
@@ -88,6 +86,7 @@ public class InfoPanel extends JPanel {
             add(productionLabel);
             yPosition += 40;
 
+        //production button
         if (building.getEnergyCost()>0) {
             JButton startButton = new JButton("Produce");
             startButton.setBounds(10, yPosition, 150, 30);
@@ -207,11 +206,8 @@ public class InfoPanel extends JPanel {
                         return;
                 }
 
-
                 building.setLevel(building.getLevel() + 1);
 
-
-                //show(building);
             } else {
                 JOptionPane.showMessageDialog(null, "Not enough resources to upgrade!");
             }
@@ -219,7 +215,6 @@ public class InfoPanel extends JPanel {
         add(upgradeButton);
         yPosition += 40;
 
-        // Upgrade costs (conditionally displayed)
         if (building.getGoldUpgradeCost() > 0) {
             goldupgrade = new ResourceDisplay(new ImageIcon("images/gold.png"), building.getGoldUpgradeCost(), 40, 40, false);
             goldupgrade.setBounds(10, yPosition, 75, 50);

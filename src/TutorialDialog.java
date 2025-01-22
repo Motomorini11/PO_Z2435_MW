@@ -36,7 +36,7 @@ public class TutorialDialog extends JDialog {
 
         JButton closeButton = new JButton("Start Game");
         closeButton.setFont(new Font("Arial", Font.BOLD, 18));
-        closeButton.addActionListener(e -> dispose()); // Close the dialog when clicked
+        closeButton.addActionListener(e -> dispose());
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.DARK_GRAY);
         buttonPanel.add(closeButton);
