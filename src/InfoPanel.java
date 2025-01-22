@@ -26,16 +26,14 @@ public class InfoPanel extends JPanel {
     }
 
     public void show(Building building) {
-
         if (isVisible() && currentBuilding == building) {
             removeAll();
-
             return;
         }
+
         currentBuilding = building;
         setVisible(false);
         removeAll();
-
 
         int yPosition = 0;
 
@@ -61,43 +59,84 @@ public class InfoPanel extends JPanel {
 
         Font infoFont = new Font("Arial", Font.PLAIN, 14);
 
-        JLabel energyLabel = new JLabel("Energy Cost: " + building.getEnergyCost());
-        energyLabel.setForeground(Color.WHITE);
-        energyLabel.setFont(infoFont);
-        energyLabel.setBounds(10, yPosition, 200, 25);
-        add(energyLabel);
-        yPosition += 40;
+        // Conditional energy cost display
+        if (building.getEnergyCost() > 0) {
+            JLabel energyLabel = new JLabel("Energy Cost: " + building.getEnergyCost());
+            energyLabel.setForeground(Color.WHITE);
+            energyLabel.setFont(infoFont);
+            energyLabel.setBounds(10, yPosition, 200, 25);
+            add(energyLabel);
+            yPosition += 40;
+        }
 
-        JLabel workersLabel = new JLabel("Workers Required: " + building.getWorkersRequired());
-        workersLabel.setForeground(Color.WHITE);
-        workersLabel.setFont(infoFont);
-        workersLabel.setBounds(10, yPosition, 200, 25);
-        add(workersLabel);
-        yPosition += 40;
+        // Conditional workers required display
+        if (building.getWorkersRequired() > 0) {
+            JLabel workersLabel = new JLabel("Workers Required: " + building.getWorkersRequired());
+            workersLabel.setForeground(Color.WHITE);
+            workersLabel.setFont(infoFont);
+            workersLabel.setBounds(10, yPosition, 200, 25);
+            add(workersLabel);
+            yPosition += 40;
+        }
 
-        JLabel productionLabel = new JLabel("Production Output: " + building.getProductionOutput());
-        productionLabel.setForeground(Color.WHITE);
-        productionLabel.setFont(infoFont);
-        productionLabel.setBounds(10, yPosition, 200, 25);
-        add(productionLabel);
-        yPosition += 40;
+        // Conditional production output display
+        if (building.getProductionOutput() > 0) {
+            JLabel productionLabel = new JLabel("Production Output: " + building.getProductionOutput());
+            productionLabel.setForeground(Color.WHITE);
+            productionLabel.setFont(infoFont);
+            productionLabel.setBounds(10, yPosition, 200, 25);
+            add(productionLabel);
+            yPosition += 40;
 
-        JLabel timeLabel = new JLabel("Production Time: " + building.getProductionTime() + " turns");
-        timeLabel.setForeground(Color.WHITE);
-        timeLabel.setFont(infoFont);
-        timeLabel.setBounds(10, yPosition, 200, 25);
-        add(timeLabel);
-        yPosition += 50;
+        if (building.getEnergyCost()>0) {
+            JButton startButton = new JButton("Produce");
+            startButton.setBounds(10, yPosition, 150, 30);
+            startButton.setBackground(new Color(169, 169, 169));
+            startButton.setForeground(Color.BLACK);
+            startButton.setBorder(new LineBorder(Color.BLACK, 1));
+            startButton.setFont(new Font("Arial", Font.PLAIN, 12));
+            startButton.addActionListener(e -> {
+                if (building.getEnergyCost() <= game.getEnergy() && building.getWorkersRequired() <= game.getWorkers()) {
+                    String buildingName = RectangleSpawner.getBuildingName(building);
 
-        // Start Production button
-        JButton startButton = new JButton("Produce");
-        startButton.setBounds(10, yPosition, 150, 30);
-        startButton.setBackground(new Color(169, 169, 169));
-        startButton.setForeground(Color.BLACK);
-        startButton.setBorder(new LineBorder(Color.BLACK, 1));
-        startButton.setFont(new Font("Arial", Font.PLAIN, 12));
-        add(startButton);
-        yPosition += 50;
+                    switch (buildingName) {
+                        case "Farm":
+                            game.deductEnergy(building.getEnergyCost());
+                            game.deductWorkers(building.getWorkersRequired());
+                            game.addFood(building.getProductionOutput());
+                            break;
+                        case "Sawmill":
+                            game.deductEnergy(building.getEnergyCost());
+                            game.deductWorkers(building.getWorkersRequired());
+                            game.addwood(building.getProductionOutput());
+                            break;
+                        case "Quarry":
+                            game.deductEnergy(building.getEnergyCost());
+                            game.deductWorkers(building.getWorkersRequired());
+                            game.addstone(building.getProductionOutput());
+                            break;
+                        case "House":
+                            game.deductEnergy(building.getEnergyCost());
+                            game.deductWorkers(building.getWorkersRequired());
+                            game.addWorkers(building.getProductionOutput());
+                            break;
+                        case "Armory":
+                            game.deductEnergy(building.getEnergyCost());
+                            game.deductWorkers(building.getWorkersRequired());
+                            game.addsword(building.getProductionOutput());
+                            break;
+                        default:
+                            JOptionPane.showMessageDialog(null, "This building cannot produce resources!");
+                            break;
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Not enough resources to start production!");
+                }
+            });
+            add(startButton);
+            yPosition += 50;
+        }
+        }
 
         // Upgrade button
         JButton upgradeButton = new JButton("Upgrade");
@@ -107,47 +146,94 @@ public class InfoPanel extends JPanel {
         upgradeButton.setBorder(new LineBorder(Color.BLACK, 1));
         upgradeButton.setFont(new Font("Arial", Font.PLAIN, 12));
         upgradeButton.addActionListener(e -> {
-                if (building.getGoldUpgradeCost() <= game.getGold() &&
-                        building.getWoodUpgradeCost() <= game.getWood() &&
-                        building.getStoneUpgradeCost() <= game.getStone()) {
+            if (building.getGoldUpgradeCost() <= game.getGold() &&
+                    building.getWoodUpgradeCost() <= game.getWood() &&
+                    building.getStoneUpgradeCost() <= game.getStone()) {
 
 
-                    game.deductGold(building.getGoldUpgradeCost());
-                    game.deductWood(building.getWoodUpgradeCost());
-                    game.deductStone(building.getStoneUpgradeCost());
+                game.deductGold(building.getGoldUpgradeCost());
+                game.deductWood(building.getWoodUpgradeCost());
+                game.deductStone(building.getStoneUpgradeCost());
+
+                String buildingName = RectangleSpawner.getBuildingName(building);
 
 
-                    building.setGoldUpgradeCost(building.getGoldUpgradeCost() + 5);
-                    building.setWoodUpgradeCost(building.getWoodUpgradeCost() + 5);
-                    building.setStoneUpgradeCost(building.getStoneUpgradeCost() + 5);
-                    building.setLevel(building.getLevel() + 1);
+                switch (buildingName) {
+                    case "Farm": // Farm produces food
+                        building.setProductionOutput(building.getProductionOutput() + 10);
+                        building.setGoldUpgradeCost(building.getGoldUpgradeCost() + 2);
+                        building.setWoodUpgradeCost(building.getWoodUpgradeCost() + 5);
+                        building.setStoneUpgradeCost(building.getStoneUpgradeCost() + 5);
+                        break;
 
+                    case "Sawmill": // Sawmill produces wood
+                        building.setProductionOutput(building.getProductionOutput() + 5);
+                        building.setGoldUpgradeCost(building.getGoldUpgradeCost() + 1);
+                        building.setWoodUpgradeCost(building.getWoodUpgradeCost() + 10);
+                        building.setStoneUpgradeCost(building.getStoneUpgradeCost() + 5);
+                        break;
 
-                    show(building);
-                } else {
+                    case "Quarry": // Quarry produces stone
+                        building.setProductionOutput(building.getProductionOutput() + 5);
+                        building.setGoldUpgradeCost(building.getGoldUpgradeCost() + 1);
+                        building.setWoodUpgradeCost(building.getWoodUpgradeCost() + 5);
+                        building.setStoneUpgradeCost(building.getStoneUpgradeCost() + 10);
+                        break;
 
-                    JOptionPane.showMessageDialog(null, "Not enough resources to upgrade!");
+                    case "House": // House adds workers
+                        building.setProductionOutput(building.getProductionOutput() + 1);
+                        building.setGoldUpgradeCost(building.getGoldUpgradeCost() + 10);
+                        building.setWoodUpgradeCost(building.getWoodUpgradeCost() + 10);
+                        building.setStoneUpgradeCost(building.getStoneUpgradeCost() + 10);
+                        break;
+
+                    case "Armory": // Armory produces swords
+                        building.setProductionOutput(building.getProductionOutput() + 3);
+                        building.setGoldUpgradeCost(building.getGoldUpgradeCost() + 10);
+                        building.setWoodUpgradeCost(building.getWoodUpgradeCost() + 15);
+                        building.setStoneUpgradeCost(building.getStoneUpgradeCost() + 15);
+                        break;
+                    case "Castle":
+                        game.addEnergy(building.getProductionOutput());
+                        game.addTax(1);
+                        building.setProductionOutput(building.getProductionOutput() + 2);
+                        building.setGoldUpgradeCost(building.getGoldUpgradeCost() + 10);
+                        building.setWoodUpgradeCost(building.getWoodUpgradeCost() + 10);
+                        building.setStoneUpgradeCost(building.getStoneUpgradeCost() + 10);
+                        break;
+
+                    default:
+                        JOptionPane.showMessageDialog(null, "This building cannot be upgraded!");
+                        return;
                 }
-            });
 
-            add(upgradeButton);
+
+                building.setLevel(building.getLevel() + 1);
+
+
+                //show(building);
+            } else {
+                JOptionPane.showMessageDialog(null, "Not enough resources to upgrade!");
+            }
+        });
+        add(upgradeButton);
         yPosition += 40;
 
-
+        // Upgrade costs (conditionally displayed)
         if (building.getGoldUpgradeCost() > 0) {
-            goldupgrade = new ResourceDisplay(new ImageIcon("images/gold.png"),building.getGoldUpgradeCost(),40,40,false);
+            goldupgrade = new ResourceDisplay(new ImageIcon("images/gold.png"), building.getGoldUpgradeCost(), 40, 40, false);
             goldupgrade.setBounds(10, yPosition, 75, 50);
             add(goldupgrade);
         }
 
         if (building.getWoodUpgradeCost() > 0) {
-            woodupgrade = new ResourceDisplay(new ImageIcon("images/wood.png"),building.getWoodUpgradeCost(),40,40,false);
+            woodupgrade = new ResourceDisplay(new ImageIcon("images/wood.png"), building.getWoodUpgradeCost(), 40, 40, false);
             woodupgrade.setBounds(100, yPosition, 75, 50);
             add(woodupgrade);
         }
 
         if (building.getStoneUpgradeCost() > 0) {
-            stoneupgrade = new ResourceDisplay(new ImageIcon("images/stone.png"),building.getStoneUpgradeCost(),40,40,false);
+            stoneupgrade = new ResourceDisplay(new ImageIcon("images/stone.png"), building.getStoneUpgradeCost(), 40, 40, false);
             stoneupgrade.setBounds(200, yPosition, 75, 50);
             add(stoneupgrade);
         }
@@ -157,4 +243,3 @@ public class InfoPanel extends JPanel {
         setVisible(true);
     }
 }
-

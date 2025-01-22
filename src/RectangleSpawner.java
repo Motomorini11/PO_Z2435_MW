@@ -7,7 +7,6 @@ import java.util.Map;
 
 
 public class RectangleSpawner {
-    private Game game;
 
     private static Map<Building, String> buildingNames = new HashMap<>();
 

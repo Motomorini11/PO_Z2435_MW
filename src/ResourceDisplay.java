@@ -6,7 +6,7 @@ public class ResourceDisplay extends JComponent {
     private JLabel resourceLabel;
     private int maxCount;
     private int usedCount;
-    private boolean showDetailedFormat; // Flag to control display format
+    private boolean showDetailedFormat;
 
     // Constructor with showDetailedFormat flag
     public ResourceDisplay(ImageIcon icon, int count, int width, int height, boolean showDetailedFormat) {
@@ -16,7 +16,7 @@ public class ResourceDisplay extends JComponent {
         this.resourceIcon = resizeIcon(icon, width, height);
         JLabel iconLabel = new JLabel(resourceIcon);
 
-        this.showDetailedFormat = showDetailedFormat; // Set the format flag
+        this.showDetailedFormat = showDetailedFormat;
         this.maxCount = 0;
         this.usedCount = 0;
 
@@ -26,7 +26,7 @@ public class ResourceDisplay extends JComponent {
         resourceLabel.setForeground(Color.WHITE);
 
         add(iconLabel);
-        add(Box.createRigidArea(new Dimension(0, 0))); // Space between icon and count text
+        add(Box.createRigidArea(new Dimension(0, 0)));
         add(resourceLabel);
     }
 
@@ -59,7 +59,7 @@ public class ResourceDisplay extends JComponent {
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
-        g2d.setColor(new Color(0, 0, 0, 128)); // Semi-transparent background
+        g2d.setColor(new Color(0, 0, 0, 128));
         g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 15, 15);
         g2d.dispose();
         super.paintComponent(g);

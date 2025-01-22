@@ -2,18 +2,16 @@ public class Building {
     private int energyCost;
     private int workersRequired;
     private int productionOutput;
-    private int productionTime;
     private int goldUpgradeCost;
     private int woodUpgradeCost;
     private int stoneUpgradeCost;
     private int level;
 
-    public Building(int energyCost, int workersRequired, int productionOutput, int productionTime,
+    public Building(int energyCost, int workersRequired, int productionOutput,
                     int goldUpgradeCost, int woodUpgradeCost, int stoneUpgradeCost, int level) {
         this.energyCost = energyCost;
         this.workersRequired = workersRequired;
         this.productionOutput = productionOutput;
-        this.productionTime = productionTime;
         this.goldUpgradeCost = goldUpgradeCost;
         this.woodUpgradeCost = woodUpgradeCost;
         this.stoneUpgradeCost = stoneUpgradeCost;
@@ -27,8 +25,6 @@ public class Building {
     public void setWorkersRequired(int workersRequired) { this.workersRequired = workersRequired; }
     public int getProductionOutput() { return productionOutput; }
     public void setProductionOutput(int productionOutput) { this.productionOutput = productionOutput; }
-    public int getProductionTime() { return productionTime; }
-    public void setProductionTime(int productionTime) { this.productionTime = productionTime; }
     public int getGoldUpgradeCost() { return goldUpgradeCost; }
     public void setGoldUpgradeCost(int goldUpgradeCost) { this.goldUpgradeCost = goldUpgradeCost; }
     public int getWoodUpgradeCost() { return woodUpgradeCost; }

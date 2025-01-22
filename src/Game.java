@@ -8,12 +8,11 @@ public class Game {
     private int stone;
     private int food;
     private int gold;
-    private int iron;
     private int sword;
-    private int tool;
     private int workers;
     private int maxWorkers;
     private int FreeWorkers;
+    private int tax;
 
     private Preferences prefs;
     private final String RECORD_KEY = "highestTurnRecord";
@@ -22,25 +21,23 @@ public class Game {
         prefs = Preferences.userNodeForPackage(Game.class);
         this.turn = 1;
         this.energy = 10;
-        this.maxEnergy = energy;
-        this.wood = 100;
-        this.stone = 100;
-        this.food = 400;
-        this.gold = 50;
-        this.iron = 0;
-        this.sword = 2100;
-        this.tool = 0;
+        this.maxEnergy = 10;
+        this.wood = 20;
+        this.stone = 20;
+        this.food = 20;
+        this.gold = 10;
+        this.sword = 0;
         this.workers = 5;
         this.maxWorkers = 5;
         this.FreeWorkers = workers;
+        this.tax = 1;
     }
 
 
     public void nextTurn() {
         turn++;
 
-        energy = Math.min(energy + 10, maxEnergy);
-
+        energy = maxEnergy;
 
         if (food >= workers) {
             food -= workers;
@@ -50,7 +47,6 @@ public class Game {
             workers -= starvingWorkers;
         }
 
-
         wood = Math.max(wood, 0);
         stone = Math.max(stone, 0);
         food = Math.max(food, 0);
@@ -58,7 +54,8 @@ public class Game {
 
         FreeWorkers = workers;
 
-        energy = Math.min(energy + 10, maxEnergy);
+        addGold(workers * tax);
+
         checkForGameOver();
     }
 
@@ -77,14 +74,9 @@ public class Game {
     public int getWood() {
         return wood;
     }
-    public int getIron() {
-        return iron;
-    }
+
     public int getSword() {
         return sword;
-    }
-    public int getTool() {
-        return tool;
     }
 
     public int getStone() {
@@ -170,11 +162,15 @@ public class Game {
         }
     }
 
-    public void addEnergy(int amount) {
-        energy = Math.min(energy + amount, maxEnergy);
-    }
     public void addWorkers(int amount) {
-        FreeWorkers = Math.min(FreeWorkers + amount, maxWorkers);
+
+        if (workers < maxWorkers) {
+            workers = workers + amount;
+        }
+        else if (workers == maxWorkers) {
+            workers = workers + amount;
+            maxWorkers = maxWorkers + amount;
+        }
     }
     public void addwood(int amount) {
         wood = wood + amount;
@@ -188,14 +184,13 @@ public class Game {
     public void addGold(int amount) {
         gold = gold + amount;
     }
-    public void addTool(int amount) {
-        tool = tool + amount;
-    }
     public void addsword(int amount) {
         sword = sword + amount;
     }
-    public void addiron(int amount) {
-        iron = iron + amount;
+    public void addEnergy(int amount) {
+        maxEnergy = maxEnergy + amount;
     }
-
+    public void addTax(int amount) {
+        tax = tax + amount;
+    }
 }
